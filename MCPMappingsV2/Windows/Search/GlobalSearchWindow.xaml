@@ -1,0 +1,38 @@
+﻿<Window x:Class="MCPMappingsV2.Windows.Search.GlobalSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCPMappingsV2.Windows.Search" xmlns:converters="clr-namespace:MCPMappingsV2.Converters"
+        mc:Ignorable="d"
+        Title="Search" 
+        Height="180" 
+        Width="400"
+        ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance local:GlobalSearchViewModel}"
+        Style="{DynamicResource CustomWindowStyle}"
+        KeyDown="Window_KeyDown">
+    <Grid>
+        <Grid Margin="10,10,275,10">
+            <CheckBox IsChecked="{Binding MainView.IgnoreCases, UpdateSourceTrigger=PropertyChanged}" Content="Ignore Cases" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <CheckBox IsChecked="{Binding MainView.CheckContains, UpdateSourceTrigger=PropertyChanged}" Content="Check Contains" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top"/>
+            <CheckBox IsChecked="{Binding MainView.UseRegex, UpdateSourceTrigger=PropertyChanged}" Content="Use Regex" HorizontalAlignment="Left" Margin="0,50,0,0" VerticalAlignment="Top"/>
+        </Grid>
+        <Grid Margin="116,10,10,10">
+            <Grid.Resources>
+                <converters:EnumBooleanConverter x:Key="EnumBoolConverter4"/>
+            </Grid.Resources>
+            <TextBox Text="{Binding SearchValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="3">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchCommand, Mode=OneTime}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button Command="{Binding SearchCommand, Mode=OneTime}" Content="Search" HorizontalAlignment="Right" Margin="0,29,0,0" VerticalAlignment="Top" Width="97" Height="24"/>
+            <RadioButton IsChecked="{Binding Path=SearchType, Converter={StaticResource EnumBoolConverter4}, ConverterParameter=MCP}" Content="MCP" HorizontalAlignment="Left" Margin="0,29,0,0" VerticalAlignment="Top"/>
+            <RadioButton IsChecked="{Binding Path=SearchType, Converter={StaticResource EnumBoolConverter4}, ConverterParameter=Searge}" Content="Searge" HorizontalAlignment="Left" Margin="0,54,0,0" VerticalAlignment="Top"/>
+            <RadioButton IsChecked="{Binding Path=SearchType, Converter={StaticResource EnumBoolConverter4}, ConverterParameter=Obfuscated}" Content="Obfuscated" HorizontalAlignment="Left" Margin="0,79,0,0" VerticalAlignment="Top"/>
+            <RadioButton IsChecked="{Binding Path=SearchType, Converter={StaticResource EnumBoolConverter4}, ConverterParameter=Parameters}" Content="Parameters" HorizontalAlignment="Left" Margin="85,29,0,0" VerticalAlignment="Top"/>
+            <RadioButton IsChecked="{Binding Path=SearchType, Converter={StaticResource EnumBoolConverter4}, ConverterParameter=Package}" Content="Package" HorizontalAlignment="Left" Margin="85,54,0,0" VerticalAlignment="Top"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -22,8 +22,8 @@ namespace MCPMappingsV2.Mappings.Types {
             this.Parameters = functionParamTypes;
         }
 
-        public FunctionMappingViewModel CreateViewModel() {
-            return new FunctionMappingViewModel(this.ObfuscatedName, this.SeargeName, this.MCPName, this.Parameters);
+        public MethodMappingViewModel CreateViewModel() {
+            return new MethodMappingViewModel(this.ObfuscatedName, this.SeargeName, this.MCPName, this.Parameters);
         }
 
         public override bool Equals(object obj) {

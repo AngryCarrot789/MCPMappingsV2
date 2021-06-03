@@ -1,4 +1,6 @@
-﻿using MCPMappingsV2.Mappings.Data.CSV;
+﻿using System.Collections.Generic;
+using MCPMappingsV2.Mappings.Data.CSV;
+using MCPMappingsV2.Mappings.Data.Parser;
 using MCPMappingsV2.Mappings.Types;
 using MCPMappingsV2.Utils;
 
@@ -9,31 +11,66 @@ namespace MCPMappingsV2.Mappings {
         public const string CSV_PATH_METHODS = CSV_PATH + "methods.csv";
         public const string CSV_PATH_PACKAGES = CSV_PATH + "packages.csv";
         public const string CSV_PATH_PARAMS = CSV_PATH + "params.csv";
-        public const string CSV_PATH_OBFTOCLASS = CSV_PATH + "joined.csv";
+        public const string CSV_PATH_OBFTOCLASS = CSV_PATH + "joined.srg";
 
         // The actual raw loaded values
         public CSVLoader<CSVJavaClass> CSVClassLoader { get; }
-        public CSVLoader<CSVJavaClass> CSVMethodLoader { get; }
-        public CSVLoader<CSVJavaClass> CSVFieldLoader { get; }
+        public CSVLoader<CSVJavaMethod> CSVMethodLoader { get; }
+        public CSVLoader<CSVJavaField> CSVFieldLoader { get; }
+
+        public SRGParser SeargeParser { get; }
 
         // Cached and built-up values
         public HashSetMultiMap<string, JavaClass> ObfToMCP_Classes { get; }
         public HashSetMultiMap<string, JavaClass> MCPToObf_Classes { get; }
 
+        public ListMultiMap<string, string> FieldSeargeToMCPCache { get; }
+        public ListMultiMap<string, string> MethodSeargeToMCPCache { get; }
+
         public MappingsTable() {
             this.CSVClassLoader = new CSVLoader<CSVJavaClass>(CSV_PATH_PACKAGES, 5000);
-            this.CSVMethodLoader = new CSVLoader<CSVJavaClass>(CSV_PATH_METHODS, 10000);
-            this.CSVFieldLoader = new CSVLoader<CSVJavaClass>(CSV_PATH_FIELDS, 5000);
-
+            this.CSVMethodLoader = new CSVLoader<CSVJavaMethod>(CSV_PATH_METHODS, 10000);
+            this.CSVFieldLoader = new CSVLoader<CSVJavaField>(CSV_PATH_FIELDS, 5000);
             this.ObfToMCP_Classes = new HashSetMultiMap<string, JavaClass>();
+
+            this.FieldSeargeToMCPCache = new ListMultiMap<string, string>();
+            this.MethodSeargeToMCPCache = new ListMultiMap<string, string>();
+
+            this.SeargeParser = new SRGParser(CSV_PATH_OBFTOCLASS);
+        }
+
+        public List<string> GetMCPFieldFromSearge(string searge) {
+            if (this.FieldSeargeToMCPCache.TryGetValue(searge, out List<string> values)) {
+                return values;
+            }
+
+            return null;
+        }
+
+        public List<string> GetMCPMethodFromSearge(string searge) {
+            if (this.MethodSeargeToMCPCache.TryGetValue(searge, out List<string> values)) {
+                return values;
+            }
+
+            return null;
         }
 
         public void Load() {
+            SeargeParser.Load();
             this.CSVClassLoader.LoadRecords();
             this.CSVMethodLoader.LoadRecords();
             this.CSVFieldLoader.LoadRecords();
+            BuiltCache();
+        }
 
+        public void BuiltCache() {
+            foreach(CSVJavaMethod method in this.CSVMethodLoader.Fields) {
+                this.MethodSeargeToMCPCache.Add(method.SeargeName, method.MCPName);
+            }
 
+            foreach (CSVJavaField field in this.CSVFieldLoader.Fields) {
+                this.FieldSeargeToMCPCache.Add(field.SeargeName, field.MCPName);
+            }
         }
     }
 }

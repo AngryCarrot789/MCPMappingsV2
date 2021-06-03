@@ -236,6 +236,15 @@ namespace REghZyFramework.Utilities.String
         }
 
         /// <summary>
+        /// Extracts a region of a string
+        /// </summary>
+        /// <param name="value">The string</param>
+        /// <param name="startIndex">The start of the extraction</param>
+        public static string Extract(this string value, int startIndex) {
+            return value.Substring(startIndex);
+        }
+
+        /// <summary>
         /// Replaces all occourances of <paramref name="oldText"/> with <paramref name="newText"/>. 
         /// If the word isn't in the text, it returns the original text
         /// </summary>

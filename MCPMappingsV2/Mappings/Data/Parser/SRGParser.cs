@@ -28,10 +28,11 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
 
         public Dictionary<SRGPackage, SRGPackage> PackageMapper { get; }
         public Dictionary<string, SRGClass> ObfClassToClass { get; }
-        public Dictionary<string, SRGField> ObfFieldToField { get; }
 
         public SRGParser(string path) {
             this.FilePath = path;
+            this.PackageMapper = new Dictionary<SRGPackage, SRGPackage>();
+            this.ObfClassToClass = new Dictionary<string, SRGClass>();
         }
 
         public void Load() {
@@ -42,7 +43,7 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             foreach(string line in File.ReadAllLines(this.FilePath)) {
                 if (line.Length < 2) {
                     continue;
-                }
+                } 
 
                 switch (line.Substring(0, 2)) {
                     case KEY_PACKAGE: ParsePackage(line.Substring(4)); break;
@@ -53,20 +54,36 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             }
         }
 
+        // public void ParsePackage(string line) {
+        // 
+        // }
+        // 
+        // public void ParseClass(string line) {
+        // 
+        // }
+        // 
+        // public void ParseField(string line) {
+        // 
+        // }
+        // 
+        // public void ParseMethod(string line) {
+        // 
+        // }
+
         public void ParsePackage(string line) {
             if (line.Length < 3) {
                 return;
             }
-
+        
             int whiteSpaceIndex = line.IndexOf(' ');
             if (whiteSpaceIndex == -1 || whiteSpaceIndex >= line.Length) {
                 return;
             }
-
+        
             int side;
             string packageA;
             string packageB;
-
+        
             int packageBSideSplit = line.IndexOf(' ', whiteSpaceIndex + 1);
             if (packageBSideSplit == -1) {
                 side = 0;
@@ -75,27 +92,27 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             }
             else {
                 packageA = line.Substring(0, whiteSpaceIndex);
-                packageB = line.Substring(whiteSpaceIndex + 1, packageBSideSplit);
+                packageB = line.Extract(whiteSpaceIndex + 1, packageBSideSplit);
                 side = (line.Substring(packageBSideSplit + 1, 2) == SIDE_CLIENT) ? 0 : 2;
             }
-
+        
             this.PackageMapper.Add(new SRGPackage(packageA, side), new SRGPackage(packageB, side));
         }
-
+        
         public void ParseClass(string line) {
             if (line.Length < 3) {
                 return;
             }
-
+        
             int whiteSpaceIndex = line.IndexOf(' ');
             if (whiteSpaceIndex == -1 || whiteSpaceIndex >= line.Length) {
                 return;
             }
-
+        
             int side;
             string obfuscated;
             string packageClass;
-
+        
             int secondSplit = line.IndexOf(' ', whiteSpaceIndex + 1);
             if (secondSplit == -1) {
                 side = 0;
@@ -104,85 +121,97 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             }
             else {
                 obfuscated = line.Substring(0, whiteSpaceIndex);
-                packageClass = line.Substring(whiteSpaceIndex + 1, secondSplit);
+                packageClass = line.Extract(whiteSpaceIndex + 1, secondSplit);
                 side = (line.Substring(secondSplit + 1, 2) == SIDE_CLIENT) ? 0 : 2;
             }
-
+        
             this.ObfClassToClass.Add(obfuscated, new SRGClass(obfuscated, packageClass, side));
         }
-
+        
         public void ParseField(string line) {
             if (line.Length < 3) {
                 return;
             }
-
+        
             int whiteSpaceIndex = line.IndexOf(' ');
             if (whiteSpaceIndex == -1 || whiteSpaceIndex >= line.Length) {
                 return;
             }
-
+        
             string obfuscated = line.Substring(0, whiteSpaceIndex);
             int obfClassFieldSplit = obfuscated.IndexOf('/');
             if (obfClassFieldSplit == -1) {
                 return;
             }
-
+        
             SRGClass clazz;
             string obfClass = obfuscated.Substring(0, obfClassFieldSplit);
             string obfField = obfuscated.Substring(obfClassFieldSplit + 1);
             if (!this.ObfClassToClass.TryGetValue(obfClass, out clazz)) {
                 return;
             }
-
+        
             string packageClassField = line.Substring(whiteSpaceIndex + 1);
             int lastPathSplit = packageClassField.LastIndexOf('/');
             if (lastPathSplit == -1) {
                 return;
             }
-
+        
             string seargeField = packageClassField.Substring(lastPathSplit + 1);
-
+        
             int sideSplit = seargeField.IndexOf(' ');
             if (sideSplit == -1) {
-                this.ObfFieldToField.Add(obfField, new SRGField(clazz, obfField, seargeField, 0));
+                clazz.AddField(new SRGField(clazz, obfField, seargeField, 0));
             }
             else {
                 int side = (seargeField.Substring(sideSplit + 1, 2) == SIDE_CLIENT) ? 0 : 2;
-                this.ObfFieldToField.Add(obfField, new SRGField(clazz, obfField, seargeField.Substring(0, sideSplit), side));
+                clazz.AddField(new SRGField(clazz, obfField, seargeField.Substring(0, sideSplit), side));
             }
         }
-
+        
         public void ParseMethod(string line) {
             if (line.Length < 3) {
                 return;
             }
-
+        
             int whiteSpaceIndex = line.IndexOf(' ');
             if (whiteSpaceIndex == -1 || whiteSpaceIndex >= line.Length) {
                 return;
             }
 
             string obfClassMethod = line.Substring(0, whiteSpaceIndex);
-            string obfMethodName = obfClassMethod.Substring(obfClassMethod.IndexOf('/'));
+            int obfClassMethodSplit = obfClassMethod.IndexOf('/');
+            if (obfClassMethodSplit == -1) {
+                return;
+            }
 
+            string obfClassName = obfClassMethod.Extract(0, obfClassMethodSplit);
+
+            SRGClass clazz;
+            if (!this.ObfClassToClass.TryGetValue(obfClassName, out clazz)) {
+                return;
+            }
+        
+            string obfMethodName = obfClassMethod.Substring(obfClassMethodSplit + 1);
+        
             string theRest = line.Substring(whiteSpaceIndex + 1);
             int paramsReturnSplit = theRest.IndexOf(' ');
             if (paramsReturnSplit == -1) {
                 return;
             }
-
+        
             string paramsReturn = theRest.Substring(0, paramsReturnSplit);
             string afterParams = theRest.Substring(paramsReturnSplit + 1);
             int split = afterParams.IndexOf(' ');
             if (split == -1) {
                 return;
             }
-
+        
             string fullPath = afterParams.Substring(0, split);
             int classMethodSplit = fullPath.LastIndexOf('/');
             string className = fullPath.Substring(0, classMethodSplit);
             string methodNameSrg = fullPath.Substring(classMethodSplit + 1);
-
+        
             string afterClassMethod = afterParams.Substring(split + 1);
             string paramsStr = afterClassMethod.Between("(", ")");
             string returnStr = afterClassMethod.After(")", paramsStr.Length);
@@ -194,8 +223,8 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             else {
                 returnType = SRGType.GetPrimitive(returnStr[0]);
             }
-
-            
+        
+            clazz.AddMethod(new SRGMethod(clazz, obfMethodName, methodNameSrg, parameters, returnType));
         }
 
         public List<ISRGObject> GetParameters(string betweenBrackets) {

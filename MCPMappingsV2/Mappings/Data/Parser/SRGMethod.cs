@@ -19,7 +19,7 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
         public override int GetHashCode() {
             int hash = 17;
             hash = hash * 31 + this.Class.GetHashCode();
-            hash = hash * 31 + this.ObfuscatedName.GetHashCode();
+            hash = hash * 31 + this.SeargeName.GetHashCode();
             return hash;
         }
 

@@ -4,30 +4,191 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MCPMappingsV2"
-        xmlns:vms="clr-namespace:MCPMappingsV2.Mappings.Controls" xmlns:windows="clr-namespace:MCPMappingsV2.Windows"
+        xmlns:vms="clr-namespace:MCPMappingsV2.Mappings.Controls" 
+        xmlns:windows="clr-namespace:MCPMappingsV2.Windows" 
+        xmlns:converters="clr-namespace:MCPMappingsV2.Converters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance windows:MainViewModel}"
-        Title="MainWindow" Height="450" Width="800">
+        Style="{DynamicResource CustomWindowStyle}"
+        Title="MainWindow" Height="720" Width="1280"
+        Closing="Window_Closing"
+        KeyDown="Window_KeyDown">
+    <Window.Resources>
+        <converters:EnumBooleanConverter x:Key="EnumBoolConverter3"/>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="F" Command="{Binding OpenGlobalSearcherCommand, Mode=OneTime}"/>
+    </Window.InputBindings>
     <Grid>
-        <Grid>
-            <ListView ItemsSource="{Binding Mappings, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}">
-                <ListView.Resources>
-                    <DataTemplate DataType="{x:Type vms:ClassMappingViewModel}">
-                        <TextBlock Text="{Binding Name}" Foreground="Yellow"/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type vms:FunctionMappingViewModel}">
-                        <TextBlock Text="{Binding Name}" Foreground="Red"/>
-                    </DataTemplate>
-                </ListView.Resources>
-
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Okay" DisplayMemberBinding="{Binding Name}">
-
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="Find all..." Click="MenuItem_Click"/>
+        </Menu>
+        <Grid Margin="5,18,5,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="579*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="676*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox MinWidth="512">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Classes" VerticalAlignment="Center" Padding="2"/>
+                        <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
+                        <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
+                        <Grid Width="400">
+                            <TextBox Text="{Binding ClassSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,176,0" BorderThickness="1 1 0 1">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SearchClassCommand, Mode=OneTime}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Button Command="{Binding ResetClassSearchCommand, Mode=OneTime}" Margin="224,0,136,0" Background="{DynamicResource ContainerBackground}">
+                                <TextBlock Text="Reset"/>
+                            </Button>
+                            <Grid HorizontalAlignment="Right" Width="132">
+                                <Grid.Resources>
+                                    <converters:EnumBooleanConverter x:Key="EnumBoolConverter1"/>
+                                </Grid.Resources>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=MCP}"     Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Searge}"  Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Package}" Content="Pkg" Margin="92,1,1,1"/>
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox.Header>
+                <ListView ItemsSource="{Binding ClassMappings, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"
+                          SelectedItem="{Binding SelectedClass, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedIndex="{Binding SelectedClassIndex, UpdateSourceTrigger=PropertyChanged}"
+                          x:Name="ClassListView">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy MCP" Command="{Binding ClassCopyClipboardMCP, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                            <MenuItem Header="Copy Obfuscated" Command="{Binding ClassCopyClipboardObfus, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                            <MenuItem Header="Copy Package" Command="{Binding ClassCopyClipboardPackage, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <!--
+                        <ListView.Resources>
+                            <DataTemplate DataType="{x:Type vms:ClassMappingViewModel}">
+                                <TextBlock Text="{Binding Name}" Foreground="Yellow"/>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type vms:MethodMappingViewModel}">
+                                <TextBlock Text="{Binding Name}" Foreground="Red"/>
+                            </DataTemplate>
+                        </ListView.Resources>
+                    -->
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="200"/>
+                            <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="200"/>
+                            <GridViewColumn Header="Package" DisplayMemberBinding="{Binding Package}" Width="150"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="324*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="318*"/>
+                </Grid.RowDefinitions>
+                <GroupBox>
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Fields" VerticalAlignment="Center" Padding="2"/>
+                            <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
+                            <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
+                            <Grid Width="400">
+                                <TextBox Text="{Binding FieldSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,176,0" BorderThickness="1 1 0 1">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter" Command="{Binding SearchFieldCommand, Mode=OneTime}"/>
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Command="{Binding ResetFieldSearchCommand, Mode=OneTime}" Margin="224,0,136,0" Background="{DynamicResource ContainerBackground}">
+                                    <TextBlock Text="Reset"/>
+                                </Button>
+                                <Grid HorizontalAlignment="Right" Width="132">
+                                    <Grid.Resources>
+                                        <converters:EnumBooleanConverter x:Key="EnumBoolConverter2"/>
+                                    </Grid.Resources>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,1,1"/>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <ListView ItemsSource="{Binding SelectedClass.Fields, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedIndex="{Binding SelectedFieldIndex, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedField, UpdateSourceTrigger=PropertyChanged}"
+                              x:Name="FieldListView">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copy MCP" Command="{Binding FieldCopyClipboardMCP, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                                <MenuItem Header="Copy Searge" Command="{Binding FieldCopyClipboardSRG, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                                <MenuItem Header="Copy Obfuscated" Command="{Binding FieldCopyClipboardObfus, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="150"/>
+                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="150"/>
+                                <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="150"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </GroupBox>
+                <GroupBox Grid.Row="2">
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Methods" VerticalAlignment="Center" Padding="2"/>
+                            <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
+                            <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
+                            <Grid Width="400">
+                                <TextBox Text="{Binding MethodSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,236,0" BorderThickness="1 1 0 1">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter" Command="{Binding SearchMethodCommand, Mode=OneTime}"/>
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Command="{Binding ResetMethodSearchCommand, Mode=OneTime}" Margin="164,0,196,0" Background="{DynamicResource ContainerBackground}">
+                                    <TextBlock Text="Reset"/>
+                                </Button>
+                                <Grid HorizontalAlignment="Right" Width="192">
+                                    <Grid.Resources>
+                                        <converters:EnumBooleanConverter x:Key="EnumBoolConverter3"/>
+                                    </Grid.Resources>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,0,1" HorizontalAlignment="Left" Width="40"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Parameters}" Content="Params" Margin="133,1,1,1"/>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <ListView ItemsSource="{Binding SelectedClass.Methods, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedIndex="{Binding SelectedMethodIndex, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedMethod, UpdateSourceTrigger=PropertyChanged}"
+                              x:Name="MethodListView">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copy MCP" Command="{Binding MethodCopyClipboardMCP, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                                <MenuItem Header="Copy Searge" Command="{Binding MethodCopyClipboardSRG, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                                <MenuItem Header="Copy Obfuscated" Command="{Binding MethodCopyClipboardObfus, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                                <MenuItem Header="Copy Parameters" Command="{Binding MethodCopyClipboardParams, Mode=OneTime}" Template="{DynamicResource SingleDropDownMenuItem}"/>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="150"/>
+                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="150"/>
+                                <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="150"/>
+                                <GridViewColumn Header="Parameters" DisplayMemberBinding="{Binding Parameters}" Width="220"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </GroupBox>
+                <GridSplitter Background="Transparent" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0 -4"/>
+            </Grid>
+            <GridSplitter Background="Transparent" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-4 0"/>
         </Grid>
     </Grid>
 </Window>
