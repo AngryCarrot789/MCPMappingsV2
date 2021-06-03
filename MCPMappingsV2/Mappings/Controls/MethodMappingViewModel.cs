@@ -2,10 +2,13 @@
 
 namespace MCPMappingsV2.Mappings.Controls {
     public class MethodMappingViewModel : MappingViewModel {
-        public MethodMappingViewModel(string obfuscated, string searge, string mcp, string[] parameterTypes) {
+        public string ReturnType { get; protected set; }
+
+        public MethodMappingViewModel(string obfuscated, string searge, string mcp, string[] parameterTypes, string returnType) {
             this.ObfName = obfuscated;
             this.SRGName = searge;
             this.MCPName = mcp;
+            this.ReturnType = returnType;
 
             if (parameterTypes == null || parameterTypes.Length == 0) {
                 this.Parameters = "()";

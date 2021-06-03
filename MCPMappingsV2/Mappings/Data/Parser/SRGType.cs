@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using REghZyFramework.Utilities.String;
 
 namespace MCPMappingsV2.Mappings.Data.Parser {
     public struct SRGType : ISRGObject {
         public static SRGType SRGByte = new SRGType("byte");
         public static SRGType SRGShort = new SRGType("short");
+        public static SRGType SRGChar = new SRGType("char");
         public static SRGType SRGInt = new SRGType("int");
         public static SRGType SRGLong = new SRGType("long");
         public static SRGType SRGFloat = new SRGType("float");
@@ -17,6 +19,7 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             NameToType = new Dictionary<string, ISRGObject>();
             NameToType.Add(SRGByte.Name, SRGByte);
             NameToType.Add(SRGShort.Name, SRGShort);
+            NameToType.Add(SRGChar.Name, SRGChar);
             NameToType.Add(SRGInt.Name, SRGInt);
             NameToType.Add(SRGLong.Name, SRGLong);
             NameToType.Add(SRGFloat.Name, SRGFloat);
@@ -30,13 +33,14 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
 
         public static ISRGObject GetPrimitive(char primitive) {
             switch (primitive) {
+                case 'Z': return SRGBool;
                 case 'B': return SRGByte;
+                case 'C': return SRGChar;
+                case 'D': return SRGDouble;
+                case 'F': return SRGFloat;
                 case 'S': return SRGShort;
                 case 'I': return SRGInt;
-                case 'L': return SRGLong;
-                case 'F': return SRGFloat;
-                case 'D': return SRGDouble;
-                case 'Z': return SRGBool;
+                case 'J': return SRGLong;
                 case 'V': return SRGVoid;
             }
 
@@ -44,6 +48,13 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
         }
 
         public static ISRGObject GetOrCreateType(string name) {
+            if (name.StartsWith("L")) {
+                int lastIndex = name.LastIndexOf('/');
+                if (lastIndex != -1) {
+                    name = name.Extract(lastIndex + 1, name.Length);
+                }
+            }
+
             if (NameToType.TryGetValue(name, out ISRGObject obj)) {
                 return obj;
             }

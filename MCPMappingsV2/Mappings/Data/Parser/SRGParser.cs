@@ -215,6 +215,13 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
             string afterClassMethod = afterParams.Substring(split + 1);
             string paramsStr = afterClassMethod.Between("(", ")");
             string returnStr = afterClassMethod.After(")", paramsStr.Length);
+            int spaceIndex = returnStr.IndexOf(' ');
+            if (spaceIndex != -1) {
+                returnStr = returnStr.Substring(0, spaceIndex);
+            }
+
+            returnStr = returnStr.Replace("[", "");
+            returnStr = returnStr.Replace("]", "");
             List<ISRGObject> parameters = (paramsStr.Length == 0) ? new List<ISRGObject>() : GetParameters(paramsStr);
             ISRGObject returnType;
             if (returnStr.EndsWith(";")) {

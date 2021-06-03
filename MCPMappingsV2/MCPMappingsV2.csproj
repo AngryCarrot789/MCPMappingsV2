@@ -94,9 +94,6 @@
     <Compile Include="Mappings\Data\Parser\SRGType.cs" />
     <Compile Include="Mappings\MappingsTable.cs" />
     <Compile Include="Mappings\SearchType.cs" />
-    <Compile Include="Mappings\Types\JavaClass.cs" />
-    <Compile Include="Mappings\Types\JavaField.cs" />
-    <Compile Include="Mappings\Types\JavaFunction.cs" />
     <Compile Include="Themes\ColourfulDarkTheme.xaml.cs">
       <DependentUpon>ColourfulDarkTheme.xaml</DependentUpon>
     </Compile>

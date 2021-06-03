@@ -4,7 +4,7 @@
             this.ObfName = obfuscated;
             this.SRGName = searge;
             this.MCPName = mcp;
-            this.Parameters = "-";
+            this.Parameters = "()";
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MCPMappingsV2.Mappings.Data.CSV;
 using MCPMappingsV2.Mappings.Data.Parser;
-using MCPMappingsV2.Mappings.Types;
 using MCPMappingsV2.Utils;
 
 namespace MCPMappingsV2.Mappings {
@@ -21,9 +20,6 @@ namespace MCPMappingsV2.Mappings {
         public SRGParser SeargeParser { get; }
 
         // Cached and built-up values
-        public HashSetMultiMap<string, JavaClass> ObfToMCP_Classes { get; }
-        public HashSetMultiMap<string, JavaClass> MCPToObf_Classes { get; }
-
         public ListMultiMap<string, string> FieldSeargeToMCPCache { get; }
         public ListMultiMap<string, string> MethodSeargeToMCPCache { get; }
 
@@ -31,7 +27,6 @@ namespace MCPMappingsV2.Mappings {
             this.CSVClassLoader = new CSVLoader<CSVJavaClass>(CSV_PATH_PACKAGES, 5000);
             this.CSVMethodLoader = new CSVLoader<CSVJavaMethod>(CSV_PATH_METHODS, 10000);
             this.CSVFieldLoader = new CSVLoader<CSVJavaField>(CSV_PATH_FIELDS, 5000);
-            this.ObfToMCP_Classes = new HashSetMultiMap<string, JavaClass>();
 
             this.FieldSeargeToMCPCache = new ListMultiMap<string, string>();
             this.MethodSeargeToMCPCache = new ListMultiMap<string, string>();

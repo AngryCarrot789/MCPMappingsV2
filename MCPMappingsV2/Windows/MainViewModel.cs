@@ -145,16 +145,16 @@ namespace MCPMappingsV2.Windows {
             this.IgnoreCases = true;
             this.CheckContains = false;
             this.UseRegex = false;
-            this.ClassCopyClipboardMCP     = new Command(()=> { Clipboard.SetText(SelectedClass?.MCPName); });
-            this.ClassCopyClipboardObfus   = new Command(()=> { Clipboard.SetText(SelectedClass?.ObfName); });
-            this.ClassCopyClipboardPackage = new Command(()=> { Clipboard.SetText(SelectedClass?.Package); });
-            this.FieldCopyClipboardMCP     = new Command(()=> { Clipboard.SetText(SelectedField?.MCPName); });
-            this.FieldCopyClipboardSRG     = new Command(()=> { Clipboard.SetText(SelectedField?.SRGName); });
-            this.FieldCopyClipboardObfus   = new Command(()=> { Clipboard.SetText(SelectedField?.ObfName); });
-            this.MethodCopyClipboardMCP    = new Command(()=> { Clipboard.SetText(SelectedMethod?.MCPName); });
-            this.MethodCopyClipboardSRG    = new Command(()=> { Clipboard.SetText(SelectedMethod?.SRGName); });
-            this.MethodCopyClipboardObfus  = new Command(()=> { Clipboard.SetText(SelectedMethod?.ObfName); });
-            this.MethodCopyClipboardParams = new Command(() => { Clipboard.SetText(SelectedMethod?.Parameters); });
+            this.ClassCopyClipboardMCP     = new Command(()=> { if (SelectedClass  != null) Clipboard.SetText(SelectedClass.MCPName); });
+            this.ClassCopyClipboardObfus   = new Command(()=> { if (SelectedClass  != null) Clipboard.SetText(SelectedClass.ObfName); });
+            this.ClassCopyClipboardPackage = new Command(()=> { if (SelectedClass  != null) Clipboard.SetText(SelectedClass.Package); });
+            this.FieldCopyClipboardMCP     = new Command(()=> { if (SelectedField  != null) Clipboard.SetText(SelectedField.MCPName); });
+            this.FieldCopyClipboardSRG     = new Command(()=> { if (SelectedField  != null) Clipboard.SetText(SelectedField.SRGName); });
+            this.FieldCopyClipboardObfus   = new Command(()=> { if (SelectedField  != null) Clipboard.SetText(SelectedField.ObfName); });
+            this.MethodCopyClipboardMCP    = new Command(()=> { if (SelectedMethod != null) Clipboard.SetText(SelectedMethod.MCPName); });
+            this.MethodCopyClipboardSRG    = new Command(()=> { if (SelectedMethod != null) Clipboard.SetText(SelectedMethod.SRGName); });
+            this.MethodCopyClipboardObfus  = new Command(()=> { if (SelectedMethod != null) Clipboard.SetText(SelectedMethod.ObfName); });
+            this.MethodCopyClipboardParams = new Command(() => { if (SelectedMethod != null) Clipboard.SetText(SelectedMethod.Parameters); });
             LoadMappings();
         }
 
@@ -163,7 +163,7 @@ namespace MCPMappingsV2.Windows {
                 return;
             }
 
-            for (int i = (SelectedClassIndex + 1); i < this.ClassMappings.Count; i++) {
+            for (int i = this.SelectedClassIndex + 1; i < this.ClassMappings.Count; i++) {
                 ClassMappingViewModel clazz = this.ClassMappings[i];
                 if (MatchClass(clazz)) {
                     this.SelectedClassIndex = i;
@@ -181,7 +181,7 @@ namespace MCPMappingsV2.Windows {
             }
 
             ClassMappingViewModel clazz = this.SelectedClass;
-            for (int i = (SelectedFieldIndex + 1); i < clazz.Fields.Count; i++) {
+            for (int i = this.SelectedFieldIndex + 1; i < clazz.Fields.Count; i++) {
                 FieldMappingViewModel field = clazz.Fields[i];
                 if (MatchField(field)) {
                     this.SelectedFieldIndex = i;
@@ -199,7 +199,7 @@ namespace MCPMappingsV2.Windows {
             }
 
             ClassMappingViewModel clazz = this.SelectedClass;
-            for (int i = (SelectedMethodIndex + 1); i < clazz.Methods.Count; i++) {
+            for (int i = this.SelectedMethodIndex + 1; i < clazz.Methods.Count; i++) {
                 MethodMappingViewModel method = clazz.Methods[i];
                 if (MatchMethod(method)) {
                     this.SelectedMethodIndex = i;
@@ -226,17 +226,17 @@ namespace MCPMappingsV2.Windows {
 
                         List<string> mcpMethods = table.GetMCPMethodFromSearge(method.SeargeName);
                         if (mcpMethods == null) {
-                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, "-", paramTypesStr.ToArray()));
+                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, "(???)", paramTypesStr.ToArray(), method.ReturnType.Name));
                         }
                         else {
-                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, mcpMethods[0], paramTypesStr.ToArray()));
+                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, mcpMethods[0], paramTypesStr.ToArray(), method.ReturnType.Name));
                         }
                     }
                 }
                 foreach (KeyValuePair<string, SRGField> fieldPair in classPair.Value.ObfToFields) {
-                    List<string> mcpFields = table.GetMCPMethodFromSearge(fieldPair.Value.SeargeName);
+                    List<string> mcpFields = table.GetMCPFieldFromSearge(fieldPair.Value.SeargeName);
                     if (mcpFields == null) {
-                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, "-"));
+                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, "(???)"));
                     }
                     else {
                         classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, mcpFields[0]));
@@ -287,7 +287,7 @@ namespace MCPMappingsV2.Windows {
 
         private bool MatchField(FieldMappingViewModel field) {
             string toSearch = null;
-            switch (this.MethodSearchType) {
+            switch (this.FieldSearchType) {
                 case SearchType.MCP:
                     toSearch = field.MCPName;
                     break;
@@ -322,7 +322,7 @@ namespace MCPMappingsV2.Windows {
 
         private bool MatchClass(ClassMappingViewModel field) {
             string toSearch = null;
-            switch (this.MethodSearchType) {
+            switch (this.ClassSearchType) {
                 case SearchType.MCP:
                     toSearch = field.MCPName;
                     break;

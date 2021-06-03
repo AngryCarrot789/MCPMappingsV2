@@ -25,11 +25,11 @@
         </Menu>
         <Grid Margin="5,18,5,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="579*"/>
+                <ColumnDefinition Width="500*"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="676*"/>
             </Grid.ColumnDefinitions>
-            <GroupBox MinWidth="512">
+            <GroupBox>
                 <GroupBox.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="Classes" VerticalAlignment="Center" Padding="2"/>
@@ -48,9 +48,9 @@
                                 <Grid.Resources>
                                     <converters:EnumBooleanConverter x:Key="EnumBoolConverter1"/>
                                 </Grid.Resources>
-                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=MCP}"     Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
-                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Searge}"  Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
-                                <RadioButton IsChecked="{Binding Path=ClassSearchType, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Package}" Content="Pkg" Margin="92,1,1,1"/>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=MCP}"     Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Obfuscated}"  Content="Obf" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                <RadioButton IsChecked="{Binding Path=ClassSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter1}, ConverterParameter=Package}" Content="Pkg" Margin="92,1,1,1"/>
                             </Grid>
                         </Grid>
                     </StackPanel>
@@ -78,9 +78,9 @@
                     -->
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="200"/>
-                            <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="200"/>
-                            <GridViewColumn Header="Package" DisplayMemberBinding="{Binding Package}" Width="150"/>
+                            <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="240"/>
+                            <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
+                            <GridViewColumn Header="Package" DisplayMemberBinding="{Binding Package}" Width="180"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -110,9 +110,9 @@
                                     <Grid.Resources>
                                         <converters:EnumBooleanConverter x:Key="EnumBoolConverter2"/>
                                     </Grid.Resources>
-                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
-                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
-                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,1,1"/>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=FieldSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter2}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,1,1"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -130,9 +130,9 @@
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="150"/>
-                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="150"/>
-                                <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="150"/>
+                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="300"/>
+                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="100"/>
+                                <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -156,10 +156,10 @@
                                     <Grid.Resources>
                                         <converters:EnumBooleanConverter x:Key="EnumBoolConverter3"/>
                                     </Grid.Resources>
-                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
-                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
-                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,0,1" HorizontalAlignment="Left" Width="40"/>
-                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Parameters}" Content="Params" Margin="133,1,1,1"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=MCP}"        Content="MCP" Margin="0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Searge}"     Content="SRG" Margin="46,1,0,1" HorizontalAlignment="Left" Width="45"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Obfuscated}" Content="Obf" Margin="92,1,0,1" HorizontalAlignment="Left" Width="40"/>
+                                    <RadioButton IsChecked="{Binding Path=MethodSearchType, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumBoolConverter3}, ConverterParameter=Parameters}" Content="Params" Margin="133,1,1,1"/>
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -178,10 +178,11 @@
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="150"/>
-                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="150"/>
-                                <GridViewColumn Header="Obfuscated" DisplayMemberBinding="{Binding ObfName}" Width="150"/>
+                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="180"/>
+                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="100"/>
+                                <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
                                 <GridViewColumn Header="Parameters" DisplayMemberBinding="{Binding Parameters}" Width="220"/>
+                                <GridViewColumn Header="Returns" DisplayMemberBinding="{Binding ReturnType}" Width="115"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
