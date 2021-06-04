@@ -33,5 +33,9 @@ namespace MCPMappingsV2.Mappings.Data.CSV {
                 }
             }
         }
+
+        public void ClearRecords() {
+            this.Fields.Clear();
+        }
     }
 }

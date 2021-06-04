@@ -4,7 +4,6 @@ using System.Windows;
 using MCPMappingsV2.Mappings;
 using MCPMappingsV2.Mappings.Controls;
 using MCPMappingsV2.Mappings.Data.Parser;
-using Microsoft.Win32;
 using REghZyFramework.Utilities;
 
 namespace MCPMappingsV2.Windows {
@@ -68,19 +67,19 @@ namespace MCPMappingsV2.Windows {
         private string _classSearch;
         public string ClassSearch {
             get => this._classSearch;
-            set => RaisePropertyChanged(ref this._classSearch, value);
+            set => RaisePropertyChanged(ref this._classSearch, value, this.SearchClass);
         }
 
         private string _fieldSearch;
         public string FieldSearch {
             get => this._fieldSearch;
-            set => RaisePropertyChanged(ref this._fieldSearch, value);
+            set => RaisePropertyChanged(ref this._fieldSearch, value, this.SearchField);
         }
 
         private string _methodSearch;
         public string MethodSearch {
             get => this._methodSearch;
-            set => RaisePropertyChanged(ref this._methodSearch, value);
+            set => RaisePropertyChanged(ref this._methodSearch, value, this.SearchMethod);
         }
 
         private bool _ignoreCases;
@@ -158,6 +157,43 @@ namespace MCPMappingsV2.Windows {
             LoadMappings();
         }
 
+        public void LoadMappings() {
+            MappingsTable table = this.Mappings;
+            table.Load();
+
+            foreach (KeyValuePair<string, SRGClass> classPair in table.SeargeParser.ObfClassToClass) {
+                ClassMappingViewModel classMapping = new ClassMappingViewModel(classPair.Value.Name, classPair.Key, classPair.Value.PackageOnly);
+                foreach (KeyValuePair<string, HashSet<SRGMethod>> methodPair in classPair.Value.ObfToMethods) {
+                    foreach (SRGMethod method in methodPair.Value) {
+                        List<string> paramTypesStr = new List<string>(method.Parameters.Count);
+                        foreach (ISRGObject paramType in method.Parameters) {
+                            paramTypesStr.Add(paramType.Name);
+                        }
+
+                        List<string> mcpMethods = table.GetMCPMethodFromSearge(method.SeargeName);
+                        if (mcpMethods == null) {
+                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, "(???)", paramTypesStr.ToArray(), method.ReturnType.Name));
+                        }
+                        else {
+                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, mcpMethods[0], paramTypesStr.ToArray(), method.ReturnType.Name));
+                        }
+                    }
+                }
+
+                foreach (KeyValuePair<string, SRGField> fieldPair in classPair.Value.ObfToFields) {
+                    List<string> mcpFields = table.GetMCPFieldFromSearge(fieldPair.Value.SeargeName);
+                    if (mcpFields == null) {
+                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, "(???)"));
+                    }
+                    else {
+                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, mcpFields[0]));
+                    }
+                }
+
+                this.ClassMappings.Add(classMapping);
+            }
+        }
+
         public void SearchClass() {
             if (this.ClassSearch == string.Empty) {
                 return;
@@ -209,42 +245,6 @@ namespace MCPMappingsV2.Windows {
             }
 
             this.SelectedMethodIndex = 0;
-        }
-
-        public void LoadMappings() {
-            MappingsTable table = this.Mappings;
-            table.Load();
-
-            foreach (KeyValuePair<string, SRGClass> classPair in table.SeargeParser.ObfClassToClass) {
-                ClassMappingViewModel classMapping = new ClassMappingViewModel(classPair.Value.Name, classPair.Key, classPair.Value.PackageOnly);
-                foreach (KeyValuePair<string, HashSet<SRGMethod>> methodPair in classPair.Value.ObfToMethods) {
-                    foreach (SRGMethod method in methodPair.Value) {
-                        List<string> paramTypesStr = new List<string>(method.Parameters.Count);
-                        foreach (ISRGObject paramType in method.Parameters) {
-                            paramTypesStr.Add(paramType.Name);
-                        }
-
-                        List<string> mcpMethods = table.GetMCPMethodFromSearge(method.SeargeName);
-                        if (mcpMethods == null) {
-                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, "(???)", paramTypesStr.ToArray(), method.ReturnType.Name));
-                        }
-                        else {
-                            classMapping.Methods.Add(new MethodMappingViewModel(methodPair.Key, method.SeargeName, mcpMethods[0], paramTypesStr.ToArray(), method.ReturnType.Name));
-                        }
-                    }
-                }
-                foreach (KeyValuePair<string, SRGField> fieldPair in classPair.Value.ObfToFields) {
-                    List<string> mcpFields = table.GetMCPFieldFromSearge(fieldPair.Value.SeargeName);
-                    if (mcpFields == null) {
-                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, "(???)"));
-                    }
-                    else {
-                        classMapping.Fields.Add(new FieldMappingViewModel(fieldPair.Key, fieldPair.Value.SeargeName, mcpFields[0]));
-                    }
-                }
-
-                this.ClassMappings.Add(classMapping);
-            }
         }
 
         private bool MatchMethod(MethodMappingViewModel field) {

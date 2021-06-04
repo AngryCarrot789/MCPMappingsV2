@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using REghZyFramework.Utilities.String;
 
 namespace MCPMappingsV2.Mappings.Data.Parser {
@@ -13,16 +11,8 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
         public const string KEY_CLASS = "CL";
         public const string KEY_FIELD = "FD";
         public const string KEY_METHOD = "MD";
-
         public const string SIDE_CLIENT = "#C"; // 0
         public const string SIDE_SERVER = "#S"; // 2
-
-        // return types of obfuscated functions
-        public const string RETURN_BOOL = "Z";
-        public const string RETURN_VOID = "V";
-        public const string RETURN_INT = "I";
-        public const string RETURN_STRING = "Ljava/lang/String;";
-        public const string RETURN_ITEMSTACK = "Lnet/minecraft/src/ItemStack;";
 
         public string FilePath { get; set; }
 
@@ -52,23 +42,18 @@ namespace MCPMappingsV2.Mappings.Data.Parser {
                     case KEY_METHOD: ParseMethod(line.Substring(4)); break;
                 }
             }
-        }
 
-        // public void ParsePackage(string line) {
-        // 
-        // }
-        // 
-        // public void ParseClass(string line) {
-        // 
-        // }
-        // 
-        // public void ParseField(string line) {
-        // 
-        // }
-        // 
-        // public void ParseMethod(string line) {
-        // 
-        // }
+            List<KeyValuePair<string, SRGClass>> sortedClasses = this.ObfClassToClass.ToList();
+            sortedClasses.Sort((a, b) => string.Compare(a.Value.Name, b.Value.Name));
+
+            this.ObfClassToClass.Clear();
+            foreach (KeyValuePair<string, SRGClass> pair in sortedClasses) {
+                try {
+                    this.ObfClassToClass.Add(pair.Key, pair.Value);
+                }
+                catch { }
+            }
+        }
 
         public void ParsePackage(string line) {
             if (line.Length < 3) {
