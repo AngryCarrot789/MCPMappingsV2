@@ -67,19 +67,19 @@ namespace MCPMappingsV2.Windows {
         private string _classSearch;
         public string ClassSearch {
             get => this._classSearch;
-            set => RaisePropertyChanged(ref this._classSearch, value, this.SearchClass);
+            set => RaisePropertyChanged(ref this._classSearch, value);
         }
 
         private string _fieldSearch;
         public string FieldSearch {
             get => this._fieldSearch;
-            set => RaisePropertyChanged(ref this._fieldSearch, value, this.SearchField);
+            set => RaisePropertyChanged(ref this._fieldSearch, value);
         }
 
         private string _methodSearch;
         public string MethodSearch {
             get => this._methodSearch;
-            set => RaisePropertyChanged(ref this._methodSearch, value, this.SearchMethod);
+            set => RaisePropertyChanged(ref this._methodSearch, value);
         }
 
         private bool _ignoreCases;

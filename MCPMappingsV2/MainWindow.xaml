@@ -32,16 +32,19 @@
             <GroupBox>
                 <GroupBox.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Classes" VerticalAlignment="Center" Padding="2"/>
+                        <TextBlock Text="Classes" VerticalAlignment="Center" Padding="2" FontWeight="Bold" TextDecorations="Underline" FontSize="14"/>
                         <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
                         <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
-                        <Grid Width="400">
-                            <TextBox Text="{Binding ClassSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,176,0" BorderThickness="1 1 0 1">
+                        <Grid Width="350">
+                            <TextBox Text="{Binding ClassSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                     Padding="2" Margin="0,0,176,0" 
+                                     BorderThickness="1 1 0 1"
+                                     AcceptsReturn="False">
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding SearchClassCommand, Mode=OneTime}"/>
                                 </TextBox.InputBindings>
                             </TextBox>
-                            <Button Command="{Binding ResetClassSearchCommand, Mode=OneTime}" Margin="224,0,136,0" Background="{DynamicResource ContainerBackground}">
+                            <Button Command="{Binding ResetClassSearchCommand, Mode=OneTime}" Margin="0,0,136,0" Background="{DynamicResource ContainerBackground}" HorizontalAlignment="Right" Width="40">
                                 <TextBlock Text="Reset"/>
                             </Button>
                             <Grid HorizontalAlignment="Right" Width="132">
@@ -78,9 +81,27 @@
                     -->
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="240"/>
-                            <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
-                            <GridViewColumn Header="Package" DisplayMemberBinding="{Binding Package}" Width="180"/>
+                            <GridViewColumn Header="MCP" Width="240">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding MCPName}" FontWeight="Bold" FontSize="13"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Obfus" Width="60">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ObfName}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Package" Width="180">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Package}" FontStyle="Italic"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -94,16 +115,18 @@
                 <GroupBox>
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Fields" VerticalAlignment="Center" Padding="2"/>
+                            <TextBlock Text="Fields" VerticalAlignment="Center" Padding="2" FontSize="14" FontWeight="Bold" TextDecorations="Underline"/>
                             <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
                             <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
-                            <Grid Width="400">
-                                <TextBox Text="{Binding FieldSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,176,0" BorderThickness="1 1 0 1">
+                            <Grid Width="350">
+                                <TextBox Text="{Binding FieldSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                         Padding="2" BorderThickness="1 1 0 1"
+                                         AcceptsReturn="False" Margin="0,0,176,0">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding SearchFieldCommand, Mode=OneTime}"/>
                                     </TextBox.InputBindings>
                                 </TextBox>
-                                <Button Command="{Binding ResetFieldSearchCommand, Mode=OneTime}" Margin="224,0,136,0" Background="{DynamicResource ContainerBackground}">
+                                <Button Command="{Binding ResetFieldSearchCommand, Mode=OneTime}" Margin="0,0,136,0" Background="{DynamicResource ContainerBackground}" HorizontalAlignment="Right" Width="40">
                                     <TextBlock Text="Reset"/>
                                 </Button>
                                 <Grid HorizontalAlignment="Right" Width="132">
@@ -130,9 +153,27 @@
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="300"/>
-                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="100"/>
-                                <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
+                                <GridViewColumn Header="MCP" Width="300">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding MCPName}" FontWeight="Bold" FontSize="13"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding SRGName}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Obfus" Width="60">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ObfName}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -140,16 +181,18 @@
                 <GroupBox Grid.Row="2">
                     <GroupBox.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Methods" VerticalAlignment="Center" Padding="2"/>
+                            <TextBlock Text="Methods" VerticalAlignment="Center" Padding="2" FontSize="14" FontWeight="Bold" TextDecorations="Underline"/>
                             <Separator Width="1" Margin="3 0" Style="{DynamicResource VerticalSeparator}"/>
                             <TextBlock Text="Search: " Width="45" Padding="2" VerticalAlignment="Center"/>
                             <Grid Width="400">
-                                <TextBox Text="{Binding MethodSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Padding="2" Margin="0,0,236,0" BorderThickness="1 1 0 1">
+                                <TextBox Text="{Binding MethodSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                         Padding="2" Margin="0,0,236,0" BorderThickness="1 1 0 1"
+                                         AcceptsReturn="False">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding SearchMethodCommand, Mode=OneTime}"/>
                                     </TextBox.InputBindings>
                                 </TextBox>
-                                <Button Command="{Binding ResetMethodSearchCommand, Mode=OneTime}" Margin="164,0,196,0" Background="{DynamicResource ContainerBackground}">
+                                <Button Command="{Binding ResetMethodSearchCommand, Mode=OneTime}" Margin="0,0,196,0" Background="{DynamicResource ContainerBackground}" HorizontalAlignment="Right" Width="40">
                                     <TextBlock Text="Reset"/>
                                 </Button>
                                 <Grid HorizontalAlignment="Right" Width="192">
@@ -178,11 +221,29 @@
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="MCP" DisplayMemberBinding="{Binding MCPName}" Width="180"/>
+                                <GridViewColumn Header="MCP" Width="180">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding MCPName}" FontWeight="Bold"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="Searge" DisplayMemberBinding="{Binding SRGName}" Width="100"/>
                                 <GridViewColumn Header="Obfus" DisplayMemberBinding="{Binding ObfName}" Width="60"/>
-                                <GridViewColumn Header="Parameters" DisplayMemberBinding="{Binding Parameters}" Width="220"/>
-                                <GridViewColumn Header="Returns" DisplayMemberBinding="{Binding ReturnType}" Width="115"/>
+                                <GridViewColumn Header="Parameters" DisplayMemberBinding="{Binding Parameters}" Width="220">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Parameters}" FontStyle="Italic"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="Returns" Width="115">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ReturnType}" FontStyle="Italic"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
